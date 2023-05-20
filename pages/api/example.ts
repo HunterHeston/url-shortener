@@ -9,16 +9,12 @@ import {
 const prisma = new PrismaClient();
 
 type Data = {
-  users: User[] | null;
+  message: string;
 };
 
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<Data>
 ) {
-  const users = await prisma.user.findMany();
-
-  console.log(users);
-
-  res.status(200).json({ users });
+  res.status(200).json({ message: "Hello World" });
 }
