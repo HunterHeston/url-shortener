@@ -1,12 +1,11 @@
-import { GetServerSideProps, GetServerSidePropsContext } from "next";
+import { GetServerSidePropsContext } from "next";
 
 type RedirectProps = {
-  url: string;
+  slug: string;
 };
 
-export default function redirect({ url }: RedirectProps) {
-  console.log(url);
-  return <div>loading... to {url}</div>;
+export default function redirect({ slug }: RedirectProps) {
+  return <div>Failed to get redirect... for id {slug}</div>;
 }
 
 export async function getServerSideProps(
@@ -14,15 +13,18 @@ export async function getServerSideProps(
 ): Promise<any> {
   const slug = context.query.slug;
   try {
-    const result = await (
-      await fetch(`http://localhost/api/get?slug=${slug}`)
-    ).json();
+    const result = await fetch(`http://localhost/api/get?slug=${slug}`);
+    const data = await result.json();
 
-    context.res.writeHead(301, { Location: result.url });
-    context.res.end();
+    if (result.status === 200) {
+      console.log("here 200");
+      context.res.writeHead(301, { Location: data.url });
+      context.res.end();
+    } else {
+    }
   } catch (err) {
     console.log(err);
-    context.res.writeHead(301, { Location: "/" });
-    context.res.end();
   }
+  // Does not matter what we return here. The user will be redirected.
+  return { props: { slug } };
 }
