@@ -6,7 +6,9 @@
     "dev": "next dev -p 80",
     "build": "next build",
     "start": "next start -p 80",
-    "lint": "next lint"
+    "lint": "next lint",
+    "generate": "prisma generate --schema submodules/database/prisma/schema.prisma",
+    "studio": "prisma studio --schema submodules/database/prisma/schema.prisma"
   },
   "dependencies": {
     "@types/node": "20.2.1",
