@@ -11,23 +11,18 @@ export default function redirect({ url }: RedirectProps) {
 
 export async function getServerSideProps(
   context: GetServerSidePropsContext
-): Promise<{ props: RedirectProps }> {
+): Promise<any> {
   const slug = context.query.slug;
   try {
-    const res = await fetch(`http://localhost/api/get?slug=${slug}`);
-    const data = await res.json();
-    console.log(data);
-    return {
-      props: {
-        url: data.url,
-      },
-    };
+    const result = await (
+      await fetch(`http://localhost/api/get?slug=${slug}`)
+    ).json();
+
+    context.res.writeHead(301, { Location: result.url });
+    context.res.end();
   } catch (err) {
     console.log(err);
-    return {
-      props: {
-        url: "",
-      },
-    };
+    context.res.writeHead(301, { Location: "/" });
+    context.res.end();
   }
 }
