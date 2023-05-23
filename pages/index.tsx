@@ -47,7 +47,7 @@ export default function Shrink() {
     <div
       className={
         styles.bg +
-        " flex flex-col items-center justify-center min-h-screen py-2"
+        " flex flex-col items-center justify-center h-screen w-screen fixed"
       }
     >
       <div className="flex">
