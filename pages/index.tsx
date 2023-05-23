@@ -83,7 +83,14 @@ export function UrlView({ open, url }: UrlViewProps) {
 }
 
 // function gets what ever string is currently in the clipboard
+// returns an empty string if the clipboard is empty or failure
 async function getContentsOfClipBoard(): Promise<string> {
+  // not available on IOS browsers if served over HTTP.
+  // must be served over HTTPS on IOS
+  if (!navigator.clipboard) {
+    return "";
+  }
+
   return await navigator.clipboard.readText();
 }
 
