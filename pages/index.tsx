@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import styles from "./index.module.css";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function Shrink() {
   const [shortURL, setShortURL] = useState("");
@@ -45,12 +45,20 @@ type UrlViewProps = {
   url: string;
 };
 export function UrlView({ open, url }: UrlViewProps) {
+  const [xMax, setXMax] = useState(0);
+  const [yMax, setYMax] = useState(0);
+
+  useEffect(() => {
+    setXMax(window.innerWidth);
+    setYMax(window.innerHeight);
+  }, []);
+
   return (
     <div>
       {open && (
         <motion.div
-          initial={{ scale: 0, borderRadius: "100%" }}
-          animate={{ scale: 1, borderRadius: "0%" }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
           transition={{ duration: 0.4 }}
           className="flex items-center justify-center text-white text-2xl"
           style={{
@@ -63,7 +71,8 @@ export function UrlView({ open, url }: UrlViewProps) {
             zIndex: 9999,
           }}
         >
-          <div>{url}</div>
+          <div className={styles.highlightText}>{url}</div>
+          {NStars(xMax, yMax, 350)}
         </motion.div>
       )}
     </div>
@@ -82,4 +91,48 @@ function isValidWebAddress(url: string): boolean {
   } catch (_) {
     return false;
   }
+}
+
+function NStars(xMax: number, yMax: number, numberOfStars: number) {
+  const stars = [];
+
+  for (let i = 0; i < numberOfStars; i++) {
+    stars.push(<Star key={i} xMax={xMax} yMax={yMax} />);
+  }
+  return stars;
+}
+
+type StarProps = {
+  xMax: number;
+  yMax: number;
+};
+
+function Star({ xMax, yMax }: StarProps) {
+  const xDirection = Math.random() > 0.5 ? 1 : -1;
+  const yDirection = Math.random() > 0.5 ? 1 : -1;
+  const size = Math.random() * 3 + 1;
+
+  const startX = (Math.random() * xMax - xMax / 2) * xDirection;
+  const startY = (Math.random() * yMax - yMax / 2) * yDirection;
+
+  const endX = Math.random() * xMax * (xDirection * -1);
+  const endY = Math.random() * yMax * (yDirection * -1);
+
+  console.log(startX, startY, endX, endY);
+
+  return (
+    <motion.div
+      initial={{ x: startX, y: startY }}
+      animate={{ x: endX, y: endY }}
+      transition={{ duration: 100, type: "linear", repeat: Infinity }}
+      className="bg-white rounded-full absolute"
+      style={{ width: size, height: size, backgroundColor: RandomColor() }}
+    ></motion.div>
+  );
+}
+
+function RandomColor() {
+  return `rgb(${Math.random() * 255}, ${Math.random() * 255}, ${
+    Math.random() * 255
+  })`;
 }
