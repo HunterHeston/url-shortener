@@ -44,6 +44,9 @@ type UrlViewProps = {
   open: boolean;
   url: string;
 };
+
+// This view takes over the screen when a url is successfully shortened
+// It displays the shortened url and a bunch of stars that move around
 export function UrlView({ open, url }: UrlViewProps) {
   const [xMax, setXMax] = useState(0);
   const [yMax, setYMax] = useState(0);
@@ -68,7 +71,7 @@ export function UrlView({ open, url }: UrlViewProps) {
             width: "100vw",
             height: "100vh",
             background: "rgba(0, 0, 0, 1)",
-            zIndex: 9999,
+            zIndex: 1,
           }}
         >
           <div className={styles.highlightText}>{url}</div>
@@ -93,6 +96,8 @@ function isValidWebAddress(url: string): boolean {
   }
 }
 
+// Returns an array of stars of length numberOfStars
+// The array of jsx stars are then rendered in the calling component
 function NStars(xMax: number, yMax: number, numberOfStars: number) {
   const stars = [];
 
@@ -107,30 +112,51 @@ type StarProps = {
   yMax: number;
 };
 
+// Star is a small circle that moves from a random point to another random point
 function Star({ xMax, yMax }: StarProps) {
+  // Randomly pick a direction for the star to move in x and y
   const xDirection = Math.random() > 0.5 ? 1 : -1;
   const yDirection = Math.random() > 0.5 ? 1 : -1;
-  const size = Math.random() * 3 + 1;
 
+  // Create a few big stars that move in front of the text
+  let size = Math.random() * 3 + 1;
+  let zIndex = -1;
+  if (Math.random() > 0.99) {
+    size = 10;
+    zIndex = 2;
+  }
+
+  // where the star starts
   const startX = (Math.random() * xMax - xMax / 2) * xDirection;
   const startY = (Math.random() * yMax - yMax / 2) * yDirection;
 
+  // where the star ends
   const endX = Math.random() * xMax * (xDirection * -1);
   const endY = Math.random() * yMax * (yDirection * -1);
 
-  console.log(startX, startY, endX, endY);
-
+  // Move from point A, to point B, to point A, to point B... infinitely
   return (
     <motion.div
       initial={{ x: startX, y: startY }}
       animate={{ x: endX, y: endY }}
-      transition={{ duration: 100, type: "linear", repeat: Infinity }}
+      transition={{
+        duration: 100,
+        repeat: Infinity,
+        repeatType: "reverse",
+        ease: "linear",
+      }}
       className="bg-white rounded-full absolute"
-      style={{ width: size, height: size, backgroundColor: RandomColor() }}
+      style={{
+        width: size,
+        height: size,
+        backgroundColor: RandomColor(),
+        zIndex: zIndex,
+      }}
     ></motion.div>
   );
 }
 
+// Returns a random color for the star
 function RandomColor() {
   return `rgb(${Math.random() * 255}, ${Math.random() * 255}, ${
     Math.random() * 255
