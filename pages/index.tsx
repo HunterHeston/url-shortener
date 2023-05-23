@@ -2,6 +2,9 @@ import { motion } from "framer-motion";
 import styles from "./index.module.css";
 import { useEffect, useState } from "react";
 
+////////////////////////////////////////////////////////////////
+// Main component
+////////////////////////////////////////////////////////////////
 export default function Shrink() {
   const [shortURL, setShortURL] = useState("");
   return (
@@ -18,7 +21,7 @@ export default function Shrink() {
         }
         onClick={async () => {
           const clipboardContents = await getContentsOfClipBoard();
-          console.log(clipboardContents);
+
           if (isValidWebAddress(clipboardContents)) {
             const result = await fetch(`/api/new?url=${clipboardContents}`, {
               method: "POST",
@@ -40,6 +43,9 @@ export default function Shrink() {
   );
 }
 
+////////////////////////////////////////////////////////////////
+// Other Components
+////////////////////////////////////////////////////////////////
 type UrlViewProps = {
   open: boolean;
   url: string;
@@ -80,38 +86,6 @@ export function UrlView({ open, url }: UrlViewProps) {
       )}
     </div>
   );
-}
-
-// function gets what ever string is currently in the clipboard
-// returns an empty string if the clipboard is empty or failure
-async function getContentsOfClipBoard(): Promise<string> {
-  // not available on IOS browsers if served over HTTP.
-  // must be served over HTTPS on IOS
-  if (!navigator.clipboard) {
-    return "";
-  }
-
-  return await navigator.clipboard.readText();
-}
-
-function isValidWebAddress(url: string): boolean {
-  try {
-    new URL(url);
-    return true;
-  } catch (_) {
-    return false;
-  }
-}
-
-// Returns an array of stars of length numberOfStars
-// The array of jsx stars are then rendered in the calling component
-function NStars(xMax: number, yMax: number, numberOfStars: number) {
-  const stars = [];
-
-  for (let i = 0; i < numberOfStars; i++) {
-    stars.push(<Star key={i} xMax={xMax} yMax={yMax} />);
-  }
-  return stars;
 }
 
 type StarProps = {
@@ -163,9 +137,45 @@ function Star({ xMax, yMax }: StarProps) {
   );
 }
 
+////////////////////////////////////////////////////////////////
+// Helper functions
+////////////////////////////////////////////////////////////////
+
+// Returns an array of stars of length numberOfStars
+// The array of jsx stars are then rendered in the calling component
+function NStars(xMax: number, yMax: number, numberOfStars: number) {
+  const stars = [];
+
+  for (let i = 0; i < numberOfStars; i++) {
+    stars.push(<Star key={i} xMax={xMax} yMax={yMax} />);
+  }
+  return stars;
+}
+
 // Returns a random color for the star
 function RandomColor() {
   return `rgb(${Math.random() * 255}, ${Math.random() * 255}, ${
     Math.random() * 255
   })`;
+}
+
+// function gets what ever string is currently in the clipboard
+// returns an empty string if the clipboard is empty or failure
+async function getContentsOfClipBoard(): Promise<string> {
+  // not available on IOS browsers if served over HTTP.
+  // must be served over HTTPS on IOS
+  if (!navigator.clipboard) {
+    return "";
+  }
+
+  return await navigator.clipboard.readText();
+}
+
+function isValidWebAddress(url: string): boolean {
+  try {
+    new URL(url);
+    return true;
+  } catch (_) {
+    return false;
+  }
 }
