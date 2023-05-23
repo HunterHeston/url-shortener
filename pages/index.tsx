@@ -34,7 +34,11 @@ export default function Shrink() {
     console.log(data);
     if (result.status === 200) {
       const url = `http://${location.host}/${data.slug}`;
-      navigator.clipboard.writeText(url);
+
+      // only available over HTTPS
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(url);
+      }
       setShortURL(url);
     }
   };
