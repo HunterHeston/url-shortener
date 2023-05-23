@@ -44,7 +44,7 @@ async function getContentsOfClipBoard(): Promise<string> {
   return await navigator.clipboard.readText();
 }
 
-async function isValidWebAddress(url: string): Promise<boolean> {
+function isValidWebAddress(url: string): boolean {
   try {
     new URL(url);
     return true;

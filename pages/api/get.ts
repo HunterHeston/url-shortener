@@ -1,12 +1,6 @@
-import { getShrinkURLBySlug } from "@/submodules/database/lib/shrinkURL";
+import { getShrinkURLBySlug } from "@/submodules/database/lib/ShrinkURL";
 import { ErrorStatus } from "@/submodules/database/types/ErrorStatus";
 import { NextApiRequest, NextApiResponse } from "next";
-
-type Data = {
-  url?: string;
-  slug?: string;
-  errorMessage?: string;
-};
 
 export default async function handler(
   req: NextApiRequest,

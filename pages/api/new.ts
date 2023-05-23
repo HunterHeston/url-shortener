@@ -2,9 +2,7 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 
 // initialize a prisma client
-import { PrismaClient } from "../../submodules/database/node_modules/@prisma/client";
-import { newShrinkURL } from "@/submodules/database/lib/shrinkURL";
-const prisma = new PrismaClient();
+import { newShrinkURL } from "@/submodules/database/lib/ShrinkURL";
 
 type Data = {
   slug?: string;
