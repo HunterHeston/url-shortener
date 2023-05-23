@@ -11,6 +11,7 @@
     "studio": "prisma studio --schema submodules/database/prisma/schema.prisma"
   },
   "dependencies": {
+    "@prisma/client": "^4.14.1",
     "@types/node": "20.2.1",
     "@types/react": "18.2.6",
     "@types/react-dom": "18.2.4",
