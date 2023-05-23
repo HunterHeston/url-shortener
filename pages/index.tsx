@@ -1,4 +1,4 @@
-import { motion } from "framer-motion";
+import { motion, useAnimationControls } from "framer-motion";
 import styles from "./index.module.css";
 import { useEffect, useState } from "react";
 
@@ -89,6 +89,18 @@ export function UrlView({ open, url }: UrlViewProps) {
   const [xMax, setXMax] = useState(0);
   const [yMax, setYMax] = useState(0);
 
+  const toastControl = useAnimationControls();
+
+  const handleClick = () => {
+    console.log("clicked");
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(url);
+      toastControl.start({ x: 0 }).then(() => {
+        toastControl.start({ x: 400, transition: { delay: 3, duration: 0.7 } });
+      });
+    }
+  };
+
   useEffect(() => {
     setXMax(window.innerWidth);
     setYMax(window.innerHeight);
@@ -112,8 +124,24 @@ export function UrlView({ open, url }: UrlViewProps) {
             zIndex: 1,
           }}
         >
-          <div className={styles.highlightText}>{url}</div>
+          <div className="tooltip hover:tooltip-open" data-tip="Copy">
+            <button onClick={handleClick} className={styles.highlightText}>
+              {url}
+            </button>
+          </div>
           {NStars(xMax, yMax, 350)}
+          <motion.div
+            animate={toastControl}
+            initial={{ x: 400 }}
+            transition={{ duration: 1 }}
+            className={"toast " + styles.bg}
+          >
+            <div className="alert bg-transparent text-black">
+              <div>
+                <span>Copied 🚀</span>
+              </div>
+            </div>
+          </motion.div>
         </motion.div>
       )}
     </div>
