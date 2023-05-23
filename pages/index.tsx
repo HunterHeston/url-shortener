@@ -7,6 +7,38 @@ import { useEffect, useState } from "react";
 ////////////////////////////////////////////////////////////////
 export default function Shrink() {
   const [shortURL, setShortURL] = useState("");
+  const [showInput, setShowInput] = useState(false);
+  const [buttonText, setButtonText] = useState("Shrink Clipboard");
+  const [inputText, setInputText] = useState("");
+
+  const shrinkURL = async () => {
+    const clipboardContents = await getContentsOfClipBoard();
+    let url = "";
+
+    if (isValidWebAddress(clipboardContents)) {
+      url = clipboardContents;
+    } else if (isValidWebAddress(inputText)) {
+      url = inputText;
+    } else {
+      // Whatever is in the clipboard is not a valid url
+      // Let the user input a url manually
+      setShowInput(true);
+      setButtonText("Shrink");
+      return;
+    }
+
+    const result = await fetch(`/api/new?url=${url}`, {
+      method: "POST",
+    });
+    const data = await result.json();
+    console.log(data);
+    if (result.status === 200) {
+      const url = `http://${location.host}/${data.slug}`;
+      navigator.clipboard.writeText(url);
+      setShortURL(url);
+    }
+  };
+
   return (
     <div
       className={
@@ -14,30 +46,26 @@ export default function Shrink() {
         " flex flex-col items-center justify-center min-h-screen py-2"
       }
     >
-      <motion.button
-        className={
-          styles.button +
-          " btn btn-outline text-black font-bold text-2xl uppercase"
-        }
-        onClick={async () => {
-          const clipboardContents = await getContentsOfClipBoard();
-
-          if (isValidWebAddress(clipboardContents)) {
-            const result = await fetch(`/api/new?url=${clipboardContents}`, {
-              method: "POST",
-            });
-            const data = await result.json();
-            console.log(data);
-            if (result.status === 200) {
-              const url = `http://${location.host}/${data.slug}`;
-              navigator.clipboard.writeText(url);
-              setShortURL(url);
-            }
+      <div className="flex">
+        {showInput && (
+          <input
+            value={inputText}
+            onChange={(e) => setInputText(e.target.value)}
+            placeholder="Enter a URL"
+            type="text"
+            className="input input-bordered max-w-xs"
+          />
+        )}
+        <motion.button
+          className={
+            styles.button +
+            " btn btn-outline text-black font-bold text-2xl uppercase"
           }
-        }}
-      >
-        <span>Shrink Clipboard</span>
-      </motion.button>
+          onClick={shrinkURL}
+        >
+          <span>{buttonText}</span>
+        </motion.button>
+      </div>
       <UrlView open={shortURL !== ""} url={shortURL} />
     </div>
   );
