@@ -13,11 +13,12 @@ export async function getServerSideProps(
 ): Promise<any> {
   const slug = context.query.slug;
   try {
-    const result = await fetch(`http://localhost/api/get?slug=${slug}`);
+    const result = await fetch(
+      `${context.req.headers.host}/api/get?slug=${slug}`
+    );
     const data = await result.json();
 
     if (result.status === 200) {
-      console.log("here 200");
       context.res.writeHead(301, { Location: data.url });
       context.res.end();
     } else {
