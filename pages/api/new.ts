@@ -16,11 +16,14 @@ export default async function handler(
   res: NextApiResponse<Data>
 ) {
   // get url from query
-  const { url } = req.query;
+  let { url } = req.query;
 
   if (!isValidWebAddress(url as string)) {
     return res.status(400).json({ errorMessage: "Invalid URL" });
   }
+
+  // prepend http:// if not included
+  url = prependHttp(url as string);
 
   // create new database row
   const slug = generateRandomSlug(5);
@@ -41,6 +44,14 @@ export default async function handler(
   });
 }
 
+function prependHttp(url: string) {
+  if (!url.includes("http://") && !url.includes("https://")) {
+    url = "http://" + url;
+  }
+  return url;
+}
+
+// generates a random string of length n
 function generateRandomSlug(n: number) {
   const characters =
     "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
