@@ -3,6 +3,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 
 // initialize a prisma client
 import { newShrinkURL } from "@/submodules/database/lib/ShrinkURL";
+import { isValidWebAddress } from "@/lib/urlValidation";
 
 type Data = {
   slug?: string;
@@ -49,13 +50,4 @@ function generateRandomSlug(n: number) {
     result += characters.charAt(Math.floor(Math.random() * charactersLength));
   }
   return result;
-}
-
-function isValidWebAddress(url: string): boolean {
-  try {
-    new URL(url);
-    return true;
-  } catch (_) {
-    return false;
-  }
 }

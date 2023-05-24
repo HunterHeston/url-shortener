@@ -1,6 +1,7 @@
 import { motion, useAnimationControls } from "framer-motion";
 import styles from "./index.module.css";
 import { useEffect, useState } from "react";
+import { isValidWebAddress } from "@/lib/urlValidation";
 
 ////////////////////////////////////////////////////////////////
 // Main component
@@ -238,16 +239,6 @@ async function getContentsOfClipBoard(): Promise<string> {
   }
 
   return await navigator.clipboard.readText();
-}
-
-// Returns true if the string is a valid web address
-function isValidWebAddress(url: string): boolean {
-  try {
-    new URL(url);
-    return true;
-  } catch (_) {
-    return false;
-  }
 }
 
 // function that checks if the current user a mobile one.
