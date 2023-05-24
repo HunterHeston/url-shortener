@@ -47,7 +47,7 @@ export default function Shrink() {
     <div
       className={
         styles.bg +
-        " flex flex-col items-center justify-center h-screen w-screen fixed"
+        " flex flex-col items-center justify-center h-full w-full fixed"
       }
     >
       <div className="flex">
@@ -113,13 +113,8 @@ export function UrlView({ open, url }: UrlViewProps) {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.4 }}
-          className="flex items-center justify-center text-white text-2xl"
+          className="flex fixed top-0 left-0 items-center justify-center text-white text-2xl h-full w-screen"
           style={{
-            position: "fixed",
-            top: 0,
-            left: 0,
-            width: "100vw",
-            height: "100vh",
             background: "rgba(0, 0, 0, 1)",
             zIndex: 1,
           }}
