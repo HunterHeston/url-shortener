@@ -104,8 +104,12 @@ type UrlViewProps = {
 export function UrlView({ open, url }: UrlViewProps) {
   const [xMax, setXMax] = useState(0);
   const [yMax, setYMax] = useState(0);
-
   const toastControl = useAnimationControls();
+
+  const displayURL = url
+    .replace("http://", "")
+    .replace("https://", "")
+    .replace("www.", "");
 
   const handleClick = () => {
     if (navigator.clipboard) {
@@ -136,7 +140,7 @@ export function UrlView({ open, url }: UrlViewProps) {
         >
           <div className="tooltip hover:tooltip-open" data-tip="Copy">
             <button onClick={handleClick} className={styles.highlightText}>
-              {url}
+              {displayURL}
             </button>
           </div>
           {NStars(xMax, yMax, 350)}
