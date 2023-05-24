@@ -12,8 +12,12 @@ export default function Shrink() {
   const [inputText, setInputText] = useState("");
 
   const shrinkURL = async () => {
-    const clipboardContents = await getContentsOfClipBoard();
+    let clipboardContents = "";
     let url = "";
+
+    if (!isMobile()) {
+      clipboardContents = await getContentsOfClipBoard();
+    }
 
     if (isValidWebAddress(clipboardContents)) {
       url = clipboardContents;
@@ -42,6 +46,17 @@ export default function Shrink() {
       setShortURL(url);
     }
   };
+
+  // Just skip the clipboard check if we are on mobile
+  // The user experience is better if we just let them input a url
+  // The alternative is clicking a button that accesses the clipboard
+  // Followed by a user prompt to Paste, Speak or Create Link. This is confusing to users.
+  useEffect(() => {
+    if (isMobile()) {
+      setShowInput(true);
+      setButtonText("Shrink");
+    }
+  }, []);
 
   return (
     <div
@@ -92,7 +107,6 @@ export function UrlView({ open, url }: UrlViewProps) {
   const toastControl = useAnimationControls();
 
   const handleClick = () => {
-    console.log("clicked");
     if (navigator.clipboard) {
       navigator.clipboard.writeText(url);
       toastControl.start({ x: 0 }).then(() => {
@@ -226,6 +240,7 @@ async function getContentsOfClipBoard(): Promise<string> {
   return await navigator.clipboard.readText();
 }
 
+// Returns true if the string is a valid web address
 function isValidWebAddress(url: string): boolean {
   try {
     new URL(url);
@@ -233,4 +248,11 @@ function isValidWebAddress(url: string): boolean {
   } catch (_) {
     return false;
   }
+}
+
+// function that checks if the current user a mobile one.
+function isMobile() {
+  return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+    navigator.userAgent
+  );
 }
