@@ -86,7 +86,11 @@ export default function Shrink() {
           <span>{buttonText}</span>
         </motion.button>
       </div>
-      <UrlView open={shortURL !== ""} url={shortURL} />
+      <UrlView
+        open={shortURL !== ""}
+        url={shortURL}
+        onAnotherOneClick={() => setShortURL("")}
+      />
     </div>
   );
 }
@@ -97,14 +101,16 @@ export default function Shrink() {
 type UrlViewProps = {
   open: boolean;
   url: string;
+  onAnotherOneClick: () => void;
 };
 
 // This view takes over the screen when a url is successfully shortened
 // It displays the shortened url and a bunch of stars that move around
-export function UrlView({ open, url }: UrlViewProps) {
+export function UrlView({ open, url, onAnotherOneClick }: UrlViewProps) {
   const [xMax, setXMax] = useState(0);
   const [yMax, setYMax] = useState(0);
   const toastControl = useAnimationControls();
+  const anotherOneControl = useAnimationControls();
 
   const displayURL = url
     .replace("http://", "")
@@ -112,12 +118,18 @@ export function UrlView({ open, url }: UrlViewProps) {
     .replace("www.", "");
 
   const handleClick = () => {
+    let anotherOneDelay = 1;
     if (navigator.clipboard) {
       navigator.clipboard.writeText(url);
       toastControl.start({ x: 0 }).then(() => {
         toastControl.start({ x: 400, transition: { delay: 3, duration: 0.7 } });
       });
+      anotherOneDelay = 4;
     }
+    anotherOneControl.start({
+      opacity: 1,
+      transition: { delay: anotherOneDelay, duration: 0.7 },
+    });
   };
 
   useEffect(() => {
@@ -144,6 +156,16 @@ export function UrlView({ open, url }: UrlViewProps) {
             </button>
           </div>
           {NStars(xMax, yMax, 350)}
+          <motion.button
+            initial={{ opacity: 0 }}
+            animate={anotherOneControl}
+            className={
+              "absolute bottom-10 text-black px-5 py-3 rounded-lg " + styles.bg
+            }
+            onClick={() => onAnotherOneClick()}
+          >
+            Another one!
+          </motion.button>
           <motion.div
             animate={toastControl}
             initial={{ x: 400 }}
