@@ -156,6 +156,7 @@ export function UrlView({ open, url, onAnotherOneClick }: UrlViewProps) {
             </button>
           </div>
           {NStars(xMax, yMax, 350)}
+          <ShootingStar xMax={xMax} yMax={yMax} />
           <motion.button
             initial={{ opacity: 0 }}
             animate={anotherOneControl}
@@ -228,6 +229,42 @@ function Star({ xMax, yMax }: StarProps) {
         height: size,
         backgroundColor: RandomColor(),
         zIndex: zIndex,
+      }}
+    ></motion.div>
+  );
+}
+
+// Star is a small circle that moves from a random point to another random point
+function ShootingStar({ xMax, yMax }: StarProps) {
+  // always size 3
+  let size = 3;
+
+  // Just off screen
+  const startX = xMax + 10;
+  const startY = yMax + 10;
+
+  // where the star ends
+  const endX = Math.random() * xMax * -1;
+  const endY = Math.random() * yMax * -1;
+
+  // Move from point A, to point B, to point A, to point B... infinitely
+  return (
+    <motion.div
+      initial={{ x: startX, y: startY }}
+      animate={{ x: endX, y: endY }}
+      transition={{
+        delay: 10,
+        duration: 17,
+        repeat: Infinity,
+        repeatType: "loop",
+        ease: "linear",
+      }}
+      className="bg-white rounded-full absolute"
+      style={{
+        width: size,
+        height: size,
+        backgroundColor: "white",
+        zIndex: 10,
       }}
     ></motion.div>
   );
