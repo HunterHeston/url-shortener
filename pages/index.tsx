@@ -89,7 +89,10 @@ export default function Shrink() {
       <UrlView
         open={shortURL !== ""}
         url={shortURL}
-        onAnotherOneClick={() => setShortURL("")}
+        onAnotherOneClick={() => {
+          setShortURL("");
+          setInputText("");
+        }}
       />
     </div>
   );
