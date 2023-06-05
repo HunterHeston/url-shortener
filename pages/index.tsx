@@ -8,8 +8,8 @@ import { isValidWebAddress } from "@/lib/urlValidation";
 ////////////////////////////////////////////////////////////////
 export default function Shrink() {
   const [shortURL, setShortURL] = useState("");
-  const [showInput, setShowInput] = useState(false);
-  const [buttonText, setButtonText] = useState("Shrink Clipboard");
+  const [showInput, setShowInput] = useState(true);
+  const [buttonText, setButtonText] = useState("Shrink");
   const [inputText, setInputText] = useState("");
 
   const shrinkURL = async () => {
