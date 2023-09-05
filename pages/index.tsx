@@ -8,27 +8,18 @@ import { isValidWebAddress } from "@/lib/urlValidation";
 ////////////////////////////////////////////////////////////////
 export default function Shrink() {
   const [shortURL, setShortURL] = useState("");
-  const [showInput, setShowInput] = useState(true);
-  const [buttonText, setButtonText] = useState("Shrink");
   const [inputText, setInputText] = useState("");
+  const [error, setError] = useState("");
 
-  const shrinkURL = async () => {
-    let clipboardContents = "";
+  const shrinkURL = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setError("");
     let url = "";
 
-    if (!isMobile()) {
-      clipboardContents = await getContentsOfClipBoard();
-    }
-
-    if (isValidWebAddress(clipboardContents)) {
-      url = clipboardContents;
-    } else if (isValidWebAddress(inputText)) {
+    if (isValidWebAddress(inputText)) {
       url = inputText;
     } else {
-      // Whatever is in the clipboard is not a valid url
-      // Let the user input a url manually
-      setShowInput(true);
-      setButtonText("Shrink");
+      setError("Please enter a valid URL");
       return;
     }
 
@@ -48,17 +39,6 @@ export default function Shrink() {
     }
   };
 
-  // Just skip the clipboard check if we are on mobile
-  // The user experience is better if we just let them input a url
-  // The alternative is clicking a button that accesses the clipboard
-  // Followed by a user prompt to Paste, Speak or Create Link. This is confusing to users.
-  useEffect(() => {
-    if (isMobile()) {
-      setShowInput(true);
-      setButtonText("Shrink");
-    }
-  }, []);
-
   return (
     <div
       className={
@@ -66,26 +46,33 @@ export default function Shrink() {
         " flex flex-col items-center justify-center h-full w-full fixed"
       }
     >
-      <div className="flex">
-        {showInput && (
-          <input
-            value={inputText}
-            onChange={(e) => setInputText(e.target.value)}
-            placeholder="Enter a URL"
-            type="text"
-            className="input input-bordered max-w-xs"
-          />
-        )}
+      <form onSubmit={shrinkURL} className="flex">
+        <input
+          name="url"
+          value={inputText}
+          onChange={(e) => setInputText(e.target.value)}
+          placeholder="Enter a URL"
+          type="text"
+          required
+          className="input input-bordered max-w-xs"
+        />
         <motion.button
+          type="submit"
           className={
             styles.button +
             " btn btn-outline text-black font-bold text-2xl uppercase"
           }
-          onClick={shrinkURL}
         >
-          <span>{buttonText}</span>
+          <span>Shrink</span>
         </motion.button>
-      </div>
+      </form>
+      {error && (
+        <div className="alert alert-error mt-2">
+          <div>
+            <span>{error}</span>
+          </div>
+        </div>
+      )}
       <UrlView
         open={shortURL !== ""}
         url={shortURL}
@@ -293,23 +280,4 @@ function RandomColor() {
   return `rgb(${Math.random() * 255}, ${Math.random() * 255}, ${
     Math.random() * 255
   })`;
-}
-
-// function gets what ever string is currently in the clipboard
-// returns an empty string if the clipboard is empty or failure
-async function getContentsOfClipBoard(): Promise<string> {
-  // not available on IOS browsers if served over HTTP.
-  // must be served over HTTPS on IOS
-  if (!navigator.clipboard) {
-    return "";
-  }
-
-  return await navigator.clipboard.readText();
-}
-
-// function that checks if the current user a mobile one.
-function isMobile() {
-  return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
-    navigator.userAgent
-  );
 }
