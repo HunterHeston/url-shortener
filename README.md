@@ -2,22 +2,16 @@ This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next
 
 ## Getting Started
 
-1. Set environment variables: `DATABASE_URL="mysql://url-to-your-database.com`
+1.Clone the repo and install dependencies `npm i`.
 
-2. Initialize submodules: `git submodule init`
+2. Create a `.env` file in your project root and add: `DATABASE_URL="mysql://url-to-your-database.com`
 
-3. Push database schema to database server: `prisma generate --schema submodules/database/prisma/schema.prisma` 
+3. Initialize submodules: `git submodule init` then `git submodule update`
 
-5.  run the development server:
+4. Generate prisma types: `npx prisma generate --schema submodules/database/prisma/schema.prisma`
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-```
+5. Push database schema to database server: `npx prisma generate --schema submodules/database/prisma/schema.prisma` 
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+6.  run the development server: `npm run dev`
 
-
+Open [http://localhost:80](http://localhost:80) with your browser to see the result.
